@@ -7,16 +7,23 @@ public class LevelGenerator : MonoBehaviour {
     [System.Serializable]
     public class BasicForms
     {
-        public GameObject form;
-        public int widthDimention;
-        public int heigthDimention;
+        public string nameFigure;
+        public Transform figure;
+        private Vector3 limitFigure;
+
+       public void setLimit(Vector3 limitFigure)
+        {
+            this.limitFigure = limitFigure;
+        }     
     }
 
     public int width = 20;
 	public int height = 20;
+    public Transform enviroment;
   
     [SerializeField]
     public List<BasicForms> forms;
+
     public NavMeshSurface surface;
 	//public GameObject player;
     
@@ -24,45 +31,34 @@ public class LevelGenerator : MonoBehaviour {
 
 	
 	void Start () {
-		GenerateLevel();
+        CreateFigure();
         surface.BuildNavMesh();
 	}
-	
-	
-	void GenerateLevel()
-	{
-		// Loop over the grid
-		for (int x = 0; x <= width; x+=4)
-		{
-			for (int y = 0; y <= height; y+=4)
-			{
-				// Should we place a wall?
-				if (Random.value > 0.7f)
-				{
-                    int index = Random.Range(0, forms.Count);
-                    BasicForms item = forms[index];
 
-                    if (index > 0)
-                    {
-                        Vector3 pos = new Vector3(x - width / 2f, 1f, y - height / 2f);
-                        Instantiate(item.form, pos,item.form.transform.rotation);
-                    }
-                    else
-                    {
-                        Vector3 pos = new Vector3(x - width / 2f, 1f, y - height / 2f);
-                        Instantiate(item.form, pos, item.form.transform.rotation);
-                    }
-					
-				}
-                /*else if (!playerSpawned) // Should we spawn a player?
-				{
-					// Spawn the player
-					Vector3 pos = new Vector3(x - width / 2f, 1.25f, y - height / 2f);
-					Instantiate(player, pos, Quaternion.identity);
-					playerSpawned = true;
-				}*/
-			}
-		}
-	}
+
+    void CreateFigure()
+    {
+        foreach (BasicForms item in forms)
+        {
+            MeshRenderer mesh;
+           if(item.figure.childCount == 0)
+            {
+                mesh = item.figure.gameObject.GetComponent<MeshRenderer>();
+            }
+            else
+            {
+                mesh = item.figure.GetChild(0).gameObject.GetComponent<MeshRenderer>();
+            }
+
+            Transform instansceObject = Instantiate(item.figure, new Vector3(0.0f, 1.5f, 0.0f), transform.rotation);
+            instansceObject.SetParent(enviroment);
+
+            item.setLimit(new Vector3(mesh.bounds.extents.x * 2, mesh.bounds.extents.y, mesh.bounds.extents.z * 2));
+
+            print(mesh.bounds);
+   
+
+        }
+    }
 
 }

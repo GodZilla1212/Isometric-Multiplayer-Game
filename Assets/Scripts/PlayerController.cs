@@ -9,14 +9,26 @@ public class PlayerController : MonoBehaviour {
     public NavMeshAgent agent;
     public GameObject p_1activateFlag;
     public GameObject bearTrap;
+    public float timeUnfreeze = 2;
+    public int limitBearTrap;
+
+
     [HideInInspector]
     public bool ptengoLaBandera;
+    [HideInInspector]
+    public bool imFreeze;
+
+
+    private Rigidbody rb;
+    
+    private int countBearTrap;
 
 	void Start ()
     {
         p_1activateFlag.SetActive(false);
         ptengoLaBandera = false;
-		
+        imFreeze = false;
+        rb = GetComponent<Rigidbody>();
 	}
 	
 	
@@ -40,7 +52,12 @@ public class PlayerController : MonoBehaviour {
 
             if (Physics.Raycast(ray, out hit))
             {
-               Instantiate(bearTrap, hit.point,bearTrap.transform.rotation);
+                if (countBearTrap < limitBearTrap )
+                {
+                    Instantiate(bearTrap, hit.point, bearTrap.transform.rotation);
+                    countBearTrap++;
+                }
+              
             }
         }
 
@@ -55,6 +72,12 @@ public class PlayerController : MonoBehaviour {
             }
         }
 
+        if (imFreeze)
+        {
+            agent.isStopped = true;
+            rb.constraints = RigidbodyConstraints.FreezeAll;
+            Invoke("Unfreeze", timeUnfreeze);
+        }
 
     }
     void OnTriggerEnter(Collider other)
@@ -67,5 +90,12 @@ public class PlayerController : MonoBehaviour {
             ptengoLaBandera = true;
             
         }
+    }
+
+    void Unfreeze()
+    {
+        agent.isStopped = false;
+        rb.constraints = RigidbodyConstraints.None;
+        imFreeze = false;
     }
 }

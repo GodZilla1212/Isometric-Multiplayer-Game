@@ -10,16 +10,24 @@ public class Enemie : MonoBehaviour {
     public GameObject activateFlag;
     public NavMeshAgent enemy;
     public GameObject otherPlayer;
-    [HideInInspector] public bool tengoLaBandera;
+    public float timeUnfreeze = 2;
+
+    [HideInInspector]
+    public bool tengoLaBandera;
+    [HideInInspector]
+    public bool imFreeze;
 
     private GameObject target;
+    private Rigidbody rb;
     
 
 
-	void Start () {
+
+    void Start () {
 
         tengoLaBandera = false;
         activateFlag.SetActive(false);
+        rb = GetComponent<Rigidbody>();
 
     }
 	
@@ -46,13 +54,19 @@ public class Enemie : MonoBehaviour {
             {
                 enemy.SetDestination(target.transform.position);
             }
-           
         }
         else
         {
             enemy.SetDestination(myZone.position);
-        }     
-	}
+        }
+
+        if (imFreeze == true)
+        {
+            enemy.isStopped = true;
+            rb.constraints = RigidbodyConstraints.FreezeAll;
+            Invoke("Unfreeze", timeUnfreeze);
+        }
+    }
 
      void OnTriggerEnter(Collider other)
     {
@@ -64,5 +78,12 @@ public class Enemie : MonoBehaviour {
             tengoLaBandera = true;
             print("i touched something");
         }
+    }
+
+    void Unfreeze()
+    {
+        enemy.isStopped = false;
+        rb.constraints = RigidbodyConstraints.None;
+        imFreeze = false;
     }
 }
