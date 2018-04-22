@@ -76,7 +76,7 @@ public class Enemie : MonoBehaviour {
             Destroy(other.gameObject);
             activateFlag.SetActive(true); 
             tengoLaBandera = true;
-            print("i touched something");
+
         }
     }
 

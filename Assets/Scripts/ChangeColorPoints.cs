@@ -12,19 +12,16 @@ public class ChangeColorPoints : MonoBehaviour {
     {
         if (GetComponent<TextMesh>() == null)
         {
-            GetComponent<Camera>().backgroundColor = Othercolor.forms.color;
+            GetComponent<Camera>().backgroundColor = Othercolor.forms.GetColor("_TopColor") * 0.1f;
         }
         else
         {
-            GetComponent<TextMesh>().color = Othercolor.forms.color;
+            GetComponent<TextMesh>().color = Othercolor.forms.GetColor("_TopColor") * 0.1f;
             
         }
         
 		
 	}
 	
-	
-	void Update () {
-		
-	}
+
 }
